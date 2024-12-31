@@ -46,7 +46,6 @@ async function get_playlist_items() {
         }
 
         const data = await response.json();
-        console.log(data); 
         return data;
     } catch (error) {
         console.error("Error fetching playlist items:", error);
@@ -55,5 +54,15 @@ async function get_playlist_items() {
 }
 
 get_playlist_items().then(data => {
-    console.log("Playlist Items:", data);
+    if (!data || !data.items) {
+        console.log("empty");
+        return;
+    }
+    for (const item of data.items) { // Use for...of to iterate over array elements
+        if (item && item.track) {
+            const songName = item.track.name; // Access the track's 'name' property
+            const artistNames = item.track.artists.map(artist => artist.name).join(", "); // Get artist names
+            console.log(`Artist(s): ${artistNames}, Song: ${songName}`);
+        }
+    }
 });
