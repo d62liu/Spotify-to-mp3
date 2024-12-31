@@ -1,6 +1,6 @@
 const client_id = 'd3122c73ca094774a88360da4b90e9c6';
 const client_secret = '0fa9601ac3b54549b7fb30131f25c42d';
-const playlistid = '2FfM3gA2Kl9Zl8PKsNmfgw';
+const playlistid = '6dQz1ZnwnluFiUhBOMrJQC';
 
 async function get_accesstoken() {
     try {
@@ -27,6 +27,7 @@ async function get_accesstoken() {
 }
 
 async function get_playlist_items() {
+    info = []
     try {
         const accessToken = await get_accesstoken();
         if (!accessToken) {
@@ -46,23 +47,21 @@ async function get_playlist_items() {
         }
 
         const data = await response.json();
-        return data;
+        for (const item of data.items) { 
+            if (item && item.track) {
+                const songName = item.track.name;
+                const artistNames = item.track.artists.map(artist => artist.name);
+                info.push(`${songName} by ${artistNames}`);
+            }
+        }
+        return info;
+
     } catch (error) {
         console.error("Error fetching playlist items:", error);
         return null;
     }
 }
 
-get_playlist_items().then(data => {
-    if (!data || !data.items) {
-        console.log("empty");
-        return;
-    }
-    for (const item of data.items) { 
-        if (item && item.track) {
-            const songName = item.track.name;
-            const artistNames = item.track.artists.map(artist => artist.name).join(", ");
-            console.log(`Artist: ${artistNames}, Song: ${songName}`);
-        }
-    }
-});
+get_playlist_items().then(data =>{
+    console.log(data)
+})
