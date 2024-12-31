@@ -6,6 +6,9 @@ const browser = await puppeteer.launch({
 })
 const page = await browser.newPage();
 await page.goto('https://www.youtube.com/');
-const element = await page.waitForSelector('ytSearchboxComponentInputBox')
-await element.click
+await page.type('[name="search_query"]', 'hello');
+await page.keyboard.press('Enter');
+
+
+
 
