@@ -58,11 +58,11 @@ get_playlist_items().then(data => {
         console.log("empty");
         return;
     }
-    for (const item of data.items) { // Use for...of to iterate over array elements
+    for (const item of data.items) { 
         if (item && item.track) {
-            const songName = item.track.name; // Access the track's 'name' property
-            const artistNames = item.track.artists.map(artist => artist.name).join(", "); // Get artist names
-            console.log(`Artist(s): ${artistNames}, Song: ${songName}`);
+            const songName = item.track.name;
+            const artistNames = item.track.artists.map(artist => artist.name).join(", ");
+            console.log(`Artist: ${artistNames}, Song: ${songName}`);
         }
     }
 });
