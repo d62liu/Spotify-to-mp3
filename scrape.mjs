@@ -6,8 +6,12 @@ const browser = await puppeteer.launch({
 })
 const page = await browser.newPage();
 await page.goto('https://www.youtube.com/');
-await page.type('[name="search_query"]', 'hello');
+await page.type('[name="search_query"]', 'Reminiscence by Yuji Nomi');
 await page.keyboard.press('Enter');
+
+
+
+
 
 
 
