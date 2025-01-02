@@ -1,7 +1,6 @@
 import puppeteer from 'puppeteer';
 import * as process from "process.js";
 
-const a = process.
 const browser = await puppeteer.launch({
     headless: false,
     executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe',

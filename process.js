@@ -1,17 +1,19 @@
 const ytdl = require("@distube/ytdl-core");
-// TypeScript: import ytdl from '@distube/ytdl-core'; with --esModuleInterop
-// TypeScript: import * as ytdl from '@distube/ytdl-core'; with --allowSyntheticDefaultImports
-// TypeScript: import ytdl = require('@distube/ytdl-core'); with neither of the above
+const fs = require("fs");
 
-// Download a video
-ytdl("http://www.youtube.com/watch?v=aqz-KE-bpKQ").pipe(require("fs").createWriteStream("video.mp4"));
+const url = "https://www.youtube.com/watch?v=8WVBT7FrgJI&ab_channel=Ttv_thereaper22";
 
-// Get video info
-ytdl.getBasicInfo("http://www.youtube.com/watch?v=aqz-KE-bpKQ").then(info => {
-  console.log(info.videoDetails.title);
-});
-
-// Get video info with download formats
-ytdl.getInfo("http://www.youtube.com/watch?v=aqz-KE-bpKQ").then(info => {
-  console.log(info.formats);
-});
+(async () => {
+  try {
+    const stream = await ytdl(url);
+    stream.pipe(fs.createWriteStream("test.mp4"))
+      .on("finish", () => {
+        console.log("Download completed!");
+      })
+      .on("error", (error) => {
+        console.error("Error writing to file:", error);
+      });
+  } catch (error) {
+    console.error("Error downloading video:", error);
+  }
+})();
