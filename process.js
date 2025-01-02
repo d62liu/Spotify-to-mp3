@@ -1,24 +1,17 @@
-var YoutubeMp3Downloader = require("youtube-mp3-downloader");
+const ytdl = require("@distube/ytdl-core");
+// TypeScript: import ytdl from '@distube/ytdl-core'; with --esModuleInterop
+// TypeScript: import * as ytdl from '@distube/ytdl-core'; with --allowSyntheticDefaultImports
+// TypeScript: import ytdl = require('@distube/ytdl-core'); with neither of the above
 
-//Configure YoutubeMp3Downloader with your settings
-var YD = new YoutubeMp3Downloader({
-    "ffmpegPath": "/path/to/ffmpeg",        //   binary location
-    "youtubeVideoQuality": "highestaudio",  // Desired video quality (default: highestaudio)
-    "queueParallelism": 2,                  // Download parallelism (default: 1)
-    "progressTimeout": 2000,                // Interval in ms for the progress reports (default: 1000)
-    "allowWebm": false                      // Enable download from WebM sources (default: false)
+// Download a video
+ytdl("http://www.youtube.com/watch?v=aqz-KE-bpKQ").pipe(require("fs").createWriteStream("video.mp4"));
+
+// Get video info
+ytdl.getBasicInfo("http://www.youtube.com/watch?v=aqz-KE-bpKQ").then(info => {
+  console.log(info.videoDetails.title);
 });
 
-YD.download("Vhd6Kc4TZls");
-
-YD.on("finished", function(err, data) {
-    console.log(JSON.stringify(data));
-});
-
-YD.on("error", function(error) {
-    console.log(error);
-});
-
-YD.on("progress", function(progress) {
-    console.log(JSON.stringify(progress));
+// Get video info with download formats
+ytdl.getInfo("http://www.youtube.com/watch?v=aqz-KE-bpKQ").then(info => {
+  console.log(info.formats);
 });
