@@ -63,37 +63,57 @@ async function get_playlist_items() {
     }
 }
 
-(async () => {
+
+const getYoutubeThumbnailLink = async (searchQuery) => {
     const browser = await puppeteer.launch({ headless: false });
     const page = await browser.newPage();
 
-    await page.goto('https://www.youtube.com/');
-    
-    try {
-        // Wait for the thumbnail to load
-        await page.waitForSelector('ytd-thumbnail a#thumbnail', { visible: true });
+    // Navigate to YouTube
+    await page.goto('https://www.youtube.com');
+    console.log("YouTube loaded");
 
-        // Select the first thumbnail
-        const firstThumbnailHandle = await page.$('ytd-thumbnail a#thumbnail');
+    await page.type('input#search', searchQuery);
+    console.log("Search query entered");
 
-        if (!firstThumbnailHandle) {
-            throw new Error('Thumbnail not found!');
-        }
-
-        // Scroll into view if necessary
-        await page.evaluate(el => el.scrollIntoView(), firstThumbnailHandle);
-
-        // Click the first thumbnail
-        await firstThumbnailHandle.click();
-
-        console.log('Thumbnail clicked successfully!');
-
-        // Wait for a few seconds to see the result
-        await page.waitForTimeout(5000);
-
-    } catch (error) {
-        console.error('Error:', error);
-    } finally {
+    const searchButton = await page.$('button#search-icon-legacy');
+    if (searchButton) {
+        console.log("Search button clicked");
+        await searchButton.click();
+    } else {
+        console.log("Search button not found");
         await browser.close();
+        return;
+    }
+
+    await page.waitForSelector('ytd-video-renderer', { timeout: 10000 });
+
+    const firstThumbnail = await page.$('ytd-video-renderer a#thumbnail');
+    if (firstThumbnail) {
+        console.log("First video thumbnail found and clicked");
+        await firstThumbnail.click();
+    } else {
+        console.log("No video thumbnails found");
+        await browser.close();
+        return;
+    }
+
+    await page.waitForSelector('h1.title', { timeout: 10000 });
+
+    const videoLink = page.url();
+    console.log("Video link:", videoLink);
+
+
+    return videoLink;
+};
+
+(async () => {
+    const searchQuery = "Hello by Adele"; 
+    const videoLink = await getYoutubeThumbnailLink(searchQuery);
+
+    if (videoLink) {
+        console.log("Video link:", videoLink);
+    } else {
+        console.log("Failed to retrieve video link");
     }
 })();
+
