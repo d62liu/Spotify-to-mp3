@@ -1,3 +1,5 @@
+import puppeteer from 'puppeteer';
+
 const client_id = 'd3122c73ca094774a88360da4b90e9c6';
 const client_secret = '0fa9601ac3b54549b7fb30131f25c42d';
 const playlistid = '6dQz1ZnwnluFiUhBOMrJQC';
@@ -15,7 +17,7 @@ async function get_accesstoken() {
 
         if (!response.ok) {
             console.log(`Error: ${response.status} - ${response.statusText}`);
-            return null; 
+            return null;
         }
 
         const data = await response.json();
@@ -27,7 +29,7 @@ async function get_accesstoken() {
 }
 
 async function get_playlist_items() {
-    info = []
+    const info = [];
     try {
         const accessToken = await get_accesstoken();
         if (!accessToken) {
@@ -37,7 +39,7 @@ async function get_playlist_items() {
 
         const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistid}/tracks`, {
             headers: {
-                "Authorization": `Bearer ${accessToken}` 
+                "Authorization": `Bearer ${accessToken}`
             },
         });
 
@@ -47,21 +49,51 @@ async function get_playlist_items() {
         }
 
         const data = await response.json();
-        for (const item of data.items) { 
+        for (const item of data.items) {
             if (item && item.track) {
                 const songName = item.track.name;
-                const artistNames = item.track.artists.map(artist => artist.name);
+                const artistNames = item.track.artists.map(artist => artist.name).join(", ");
                 info.push(`${songName} by ${artistNames}`);
             }
         }
         return info;
-
     } catch (error) {
         console.error("Error fetching playlist items:", error);
         return null;
     }
 }
 
-get_playlist_items().then(data =>{
-    console.log(data)
-})
+(async () => {
+    const browser = await puppeteer.launch({ headless: false });
+    const page = await browser.newPage();
+
+    await page.goto('https://www.youtube.com/');
+    
+    try {
+        // Wait for the thumbnail to load
+        await page.waitForSelector('ytd-thumbnail a#thumbnail', { visible: true });
+
+        // Select the first thumbnail
+        const firstThumbnailHandle = await page.$('ytd-thumbnail a#thumbnail');
+
+        if (!firstThumbnailHandle) {
+            throw new Error('Thumbnail not found!');
+        }
+
+        // Scroll into view if necessary
+        await page.evaluate(el => el.scrollIntoView(), firstThumbnailHandle);
+
+        // Click the first thumbnail
+        await firstThumbnailHandle.click();
+
+        console.log('Thumbnail clicked successfully!');
+
+        // Wait for a few seconds to see the result
+        await page.waitForTimeout(5000);
+
+    } catch (error) {
+        console.error('Error:', error);
+    } finally {
+        await browser.close();
+    }
+})();
