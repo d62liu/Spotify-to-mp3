@@ -98,5 +98,7 @@ async function get_playlist_items() {
         }
         console.log(links)
     }
-
-    main()
+    console.log(await get_playlist_items())
+    console.log(await get_link('These Walls by Kendrick Lamar, Bilal, Anna Wise, Thundercat',
+    ))
+    console.log(await get_link())
