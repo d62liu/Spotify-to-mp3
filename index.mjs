@@ -2,7 +2,7 @@ import puppeteer from 'puppeteer';
 
 const client_id = 'd3122c73ca094774a88360da4b90e9c6';
 const client_secret = '0fa9601ac3b54549b7fb30131f25c42d';
-const playlistid = '6dQz1ZnwnluFiUhBOMrJQC';
+const playlistid = '5jeFDsaqN1LtQA96PdC6Ve';
 
 async function get_accesstoken() {
     try {
@@ -56,7 +56,6 @@ async function get_playlist_items() {
             }
 
         }
-        console.log(info)
         return info;
     } catch (error) {
         console.error("Error fetching playlist items:", error);
@@ -64,35 +63,40 @@ async function get_playlist_items() {
     }
 }
 
-const links = []
-    async function get_link(val){
-        const browser = await puppeteer.launch({ headless: true});
-        const page = await browser.newPage();
-        await page.goto('https://www.youtube.com');
-        console.log("YouTube loaded");
+    const links = []
+        async function get_link(val){
+            const browser = await puppeteer.launch({ headless: true});
+            const page = await browser.newPage();
+            await page.goto('https://www.youtube.com');
 
-        await page.type('[name="search_query"]', `${val}`);
-        await page.keyboard.press('Enter');
+            await page.type('[name="search_query"]', `${val}`);
+            await page.keyboard.press('Enter');
 
-        await page.waitForSelector('ytd-video-renderer', { timeout: 40000 });
+            await page.waitForSelector('ytd-video-renderer', { timeout: 40000 });
 
-        const firstThumbnail = await page.$('ytd-video-renderer a#thumbnail');
-        if (firstThumbnail) {
-            console.log("First video thumbnail found and clicked");
-            await firstThumbnail.click();
-        } else {
-            console.log("No video thumbnails found");
-            await browser.close();
-            return; 
-        }
-        await page.waitForSelector('h1.title', { timeout: 10000 });
-        const videoLink = page.url();
-        console.log("Video link:", videoLink);
-        await page.close()
-        return videoLink;
-}
-    const playlist = get_playlist_items()
-    for (const val in playlist){
-        links.push(get_link(val))
+            const firstThumbnail = await page.$('ytd-video-renderer a#thumbnail');
+            if (firstThumbnail) {
+                await firstThumbnail.click();
+            } else {
+                console.log("No video thumbnails found");
+                await browser.close();
+                return; 
+            }
+            await page.waitForSelector('h1.title', { timeout: 10000 });
+            const videoLink = page.url();
+            console.log(videoLink);
+            await page.close()
+            return videoLink;
     }
-    console.log(links)
+    async function main(){
+        const playlist = await get_playlist_items()
+        for (const val in playlist){
+            const link = await get_link(val)
+            if (link){
+                links.push(link)
+            }
+        }
+        console.log(links)
+    }
+
+    main()
