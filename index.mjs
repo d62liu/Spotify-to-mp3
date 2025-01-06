@@ -1,22 +1,21 @@
-import puppeteer from 'puppeteer';
-
+import puppeteer from 'puppeteer'; 
 const client_id = 'd3122c73ca094774a88360da4b90e9c6';
 const client_secret = '0fa9601ac3b54549b7fb30131f25c42d';
 const playlistid = '5jeFDsaqN1LtQA96PdC6Ve';
 
-async function get_accesstoken() {
+async function getAccessToken() {
     try {
         const response = await fetch("https://accounts.spotify.com/api/token", {
-            body: `grant_type=client_credentials`,
+            method: "POST",
+            body: "grant_type=client_credentials",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
-                "Authorization": `Basic ${btoa(`${client_id}:${client_secret}`)}`
-            },
-            method: "POST"
+                "Authorization": `Basic ${Buffer.from(`${client_id}:${client_secret}`).toString('base64')}`
+            }
         });
 
         if (!response.ok) {
-            console.log(`Error: ${response.status} - ${response.statusText}`);
+            console.error(`Error: ${response.status} - ${response.statusText}`);
             return null;
         }
 
@@ -28,10 +27,10 @@ async function get_accesstoken() {
     }
 }
 
-async function get_playlist_items() {
+async function getPlaylistItems() {
     const info = [];
     try {
-        const accessToken = await get_accesstoken();
+        const accessToken = await getAccessToken();
         if (!accessToken) {
             console.error("Failed to retrieve access token");
             return null;
@@ -40,13 +39,14 @@ async function get_playlist_items() {
         const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistid}/tracks`, {
             headers: {
                 "Authorization": `Bearer ${accessToken}`
-            },
+            }
         });
 
         if (!response.ok) {
-            console.log(`Error: ${response.status} - ${response.statusText}`);
+            console.error(`Error: ${response.status} - ${response.statusText}`);
             return null;
         }
+
         const data = await response.json();
         for (const item of data.items) {
             if (item && item.track) {
@@ -54,7 +54,6 @@ async function get_playlist_items() {
                 const artistNames = item.track.artists.map(artist => artist.name).join(", ");
                 info.push(`${songName} by ${artistNames}`);
             }
-
         }
         return info;
     } catch (error) {
@@ -63,39 +62,56 @@ async function get_playlist_items() {
     }
 }
 
-    const links = []
-export async function get_link(val){
-    const browser = await puppeteer.launch({ headless: true});
-    const page = await browser.newPage();
-    await page.goto('https://www.youtube.com');
+export async function getLink(val) {
+    let browser;
+    try {
+        browser = await puppeteer.launch({ headless: true });
+        const page = await browser.newPage();
+        await page.goto('https://www.youtube.com');
 
-    await page.type('[name="search_query"]', `${val}`);
-    await page.keyboard.press('Enter');
+        await page.type('[name="search_query"]', `${val}`);
+        await page.keyboard.press('Enter');
 
-    await page.waitForSelector('ytd-video-renderer', { timeout: 40000 });
+        await page.waitForSelector('ytd-video-renderer', { timeout: 40000 });
 
-    const firstThumbnail = await page.$('ytd-video-renderer a#thumbnail');
-    if (firstThumbnail) {
-        await firstThumbnail.click();
-    } else {
-        console.log("No video thumbnails found");
-        await browser.close();
-        return; 
-    }
-    await page.waitForSelector('h1.title', { timeout: 10000 });
-    const videoLink = page.url();
-    console.log(videoLink);
-    await page.close()
-    return videoLink;
-}
-export async function main(){
-const playlist = await get_playlist_items()
-for (const val in playlist){
-    const link = await get_link(val)
-    if (link){
-        links.push(link)
+        const firstThumbnail = await page.$('ytd-video-renderer a#thumbnail');
+        if (firstThumbnail) {
+            const videoLink = await page.evaluate(el => el.href, firstThumbnail);
+            return videoLink;
+        } else {
+            console.log("No video thumbnails found");
+            return null;
+        }
+    } catch (error) {
+        console.error("Error fetching YouTube link:", error);
+        return null;
+    } finally {
+        if (browser) {
+            await browser.close();
+        }
     }
 }
-console.log(links)
+
+async function main() {
+    const links = [];
+    try {
+        const playlist = await getPlaylistItems();
+        if (!playlist || playlist.length === 0) {
+            console.error("Playlist is empty or could not be retrieved.");
+            return;
+        }
+
+        for (const val of playlist) {
+            const link = await getLink(val);
+            if (link) {
+                links.push(link);
+            }
+        }
+
+        console.log("YouTube links for playlist:", links);
+    } catch (error) {
+        console.error("Error in main function:", error);
+    }
 }
-    console.log(await main())
+
+main();
