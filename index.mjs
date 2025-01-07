@@ -1,9 +1,12 @@
 import puppeteer from 'puppeteer'; 
 const client_id = 'd3122c73ca094774a88360da4b90e9c6';
 const client_secret = '0fa9601ac3b54549b7fb30131f25c42d';
-const playlistid = '5jeFDsaqN1LtQA96PdC6Ve';
-const ytdl = require("@distube/ytdl-core");
-const fs = require("fs");
+const playlistlink = 'https://open.spotify.com/playlist/3Yf4eUuIIV0dskod5W2Nkm?si=d4f21aed90594bdc'
+const regex = /playlist\/([a-zA-Z0-9]+)\?/;
+const playlistid = (playlistlink.match(regex))[1];
+export {main, getPlaylistItems};
+
+console.log(playlistid)
 
 async function getAccessToken() {
     try {
@@ -64,7 +67,7 @@ async function getPlaylistItems() {
     }
 }
 
-export async function getLink(val) {
+async function getLink(val) {
     let browser;
     try {
         browser = await puppeteer.launch({ headless: true });
@@ -94,7 +97,7 @@ export async function getLink(val) {
     }
 }
 
-export async function main() {
+async function main() {
     const links = [];
     try {
         const playlist = await getPlaylistItems();
@@ -108,8 +111,9 @@ export async function main() {
             if (link) {
                 links.push(link);
             }
+            console.log("Song added")
         }
-
+        return(links) // remove for output
         console.log("YouTube links for playlist:", links);
     } catch (error) {
         console.error("Error in main function:", error);
