@@ -1,10 +1,11 @@
 import ytdl from '@distube/ytdl-core'
 import fs from "fs";
-import {main, getPlaylistItem} from "./index.mjs" 
+import {main, getPlaylistItems} from "./index.mjs" 
 
 const url = await main();
-const playlist = await getPlaylistItem();
-for (let i = 0; i < length(url); i++){
+const playlist = await getPlaylistItems();
+
+for (let i = 0; i < url.length; i++){
 (async () => {
   try {
     const stream = await ytdl(url[i]);

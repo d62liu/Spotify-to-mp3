@@ -3,12 +3,11 @@ import promptSync from 'prompt-sync';
 
 const client_id = 'd3122c73ca094774a88360da4b90e9c6';
 const client_secret = '0fa9601ac3b54549b7fb30131f25c42d';
-
 const prompt = promptSync();
-let ask = prompt("playlist link:")
-let playlistlink = `${ask}`
+//let ask = prompt("playlist link:")
+// let playlistlink = `${ask}`
 const regex = /playlist\/([a-zA-Z0-9]+)\?/;
-const playlistid = (playlistlink.match(regex))[1];
+const playlistid = "3Yf4eUuIIV0dskod5W2Nkm" //(playlistlink.match(regex))[1];
 
 export {main, getPlaylistItems};
 async function getAccessToken() {
@@ -114,10 +113,11 @@ async function main() {
             if (link) {
                 links.push(link);
             }
-            console.log("Song added")
+            //console.log("Song added")
         }
+       
+        //console.log("YouTube links for playlist:", links);
         return(links) // remove for output
-        console.log("YouTube links for playlist:", links);
     } catch (error) {
         console.error("Error in main function:", error);
     }
