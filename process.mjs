@@ -1,9 +1,9 @@
-const ytdl = require("@distube/ytdl-core");
-const fs = require("fs");
+import ytdl from "@distube/ytdl-core";
+import fs from "fs";
+import { main } from "./index.mjs";
+const url = "https://www.youtube.com/watch?v=asBlT_zETzU&ab_channel=supertf";
 
-
-const url = "https://www.youtube.com/watch?v=8WVBT7FrgJI&ab_channel=Ttv_thereaper22";
-
+main();
 (async () => {
   try {
     const stream = await ytdl(url);

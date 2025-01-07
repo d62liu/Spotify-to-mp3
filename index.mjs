@@ -2,6 +2,8 @@ import puppeteer from 'puppeteer';
 const client_id = 'd3122c73ca094774a88360da4b90e9c6';
 const client_secret = '0fa9601ac3b54549b7fb30131f25c42d';
 const playlistid = '5jeFDsaqN1LtQA96PdC6Ve';
+const ytdl = require("@distube/ytdl-core");
+const fs = require("fs");
 
 async function getAccessToken() {
     try {
@@ -92,7 +94,7 @@ export async function getLink(val) {
     }
 }
 
-async function main() {
+export async function main() {
     const links = [];
     try {
         const playlist = await getPlaylistItems();
@@ -112,6 +114,5 @@ async function main() {
     } catch (error) {
         console.error("Error in main function:", error);
     }
-}
-
+}   
 main();
