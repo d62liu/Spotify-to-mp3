@@ -8,8 +8,8 @@ const playlist = await getPlaylistItems();
 for (let i = 0; i < url.length; i++){
 (async () => {
   try {
-    const stream = await ytdl(url[i]);
-    stream.pipe(fs.createWriteStream(`${playlist[i]}.mp4`))
+    const stream = await ytdl(url[i], {filter: "audioonly"});
+    stream.pipe(fs.createWriteStream(`${playlist[i]}.mp3`))
       .on("finish", () => {
         console.log("Download completed!");
       })
