@@ -2,6 +2,7 @@ import ytdl from '@distube/ytdl-core'
 import fs from "fs";
 import {main, getPlaylistItems} from "./index.mjs" 
 
+// const folderPath = prompt("..");
 const url = await main();
 const playlist = await getPlaylistItems();
 
