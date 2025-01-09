@@ -5,15 +5,12 @@ import pLimit from 'p-limit';
 
 const url = await main();
 const playlist = await getPlaylistItems();
-
 const limit = pLimit(5);
- 
+
 const download = async (videoUrl, videoname) => {
   try {
-
-    const stream = await ytdl(videoUrl, {filter: "audioonly"});
+    const stream = await ytdl(videoUrl, {quality:"18"});
     stream.pipe(fs.createWriteStream(`${videoname}.mp3`))
-
       .on("finish", () => {
         console.log("Download completed!");
       })
@@ -32,12 +29,9 @@ const tasks = [];
 for (let i = 0; i < url.length; i++) {
   const videoUrl = url[i];
   const fileName = playlist[i]; 
-
   const task = limit(() => download(videoUrl, fileName));
-
   tasks.push(task);
 }
-
 Promise.all(tasks).then(() => console.log("all downloads are complete"))
 
 
