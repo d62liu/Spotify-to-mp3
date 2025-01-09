@@ -9,6 +9,9 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@distube/ytdl-core": "^4.15.8",
+    "p-limit": "^6.2.0",
+    "paralleljs": "^1.1.0",
     "prompt-sync": "^4.2.0"
   }
 }
