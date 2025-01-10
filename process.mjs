@@ -33,8 +33,3 @@ for (let i = 0; i < url.length; i++) {
   tasks.push(task);
 }
 Promise.all(tasks).then(() => console.log("all downloads are complete"))
-
-
-
-
-
