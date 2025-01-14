@@ -8,11 +8,6 @@ const ffmpeg = require('fluent-ffmpeg');
 ffmpeg.setFfmpegPath(ffmpegStatic);
 
 
-ffmpeg()
-.input('video.mp4')
-.outputOptions('-ab', '192k')
-.saveToFile('audio.mp3')
-
 
 const url = await main();
 const playlist = await getPlaylistItems();
