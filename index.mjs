@@ -67,17 +67,14 @@ async function getPlaylistItems() {
         return null;
     }
 }
-
 async function getLink(val) {
     let browser;
     try {
         browser = await puppeteer.launch({ headless: true });
         const page = await browser.newPage();
-        await page.goto('https://www.youtube.com');
-
+        await page.goto('https://www.youtube.com');             
         await page.type('[name="search_query"]', `${val}`);
         await page.keyboard.press('Enter');
-
         await page.waitForSelector('ytd-video-renderer', { timeout: 40000 });
 
         const firstThumbnail = await page.$('ytd-video-renderer a#thumbnail');
@@ -85,11 +82,11 @@ async function getLink(val) {
             const videoLink = await page.evaluate(el => el.href, firstThumbnail);
             return videoLink;
         } else {
-            console.log("No video thumbnails found");
+            console.log("No thumbnails found");
             return null;
         }
     } catch (error) {
-        console.error("Error fetching YouTube link:", error);
+        console.error("Error fetching link:", error);
         return null;
     } finally {
         if (browser) {
@@ -112,10 +109,8 @@ async function main() {
             if (link) {
                 links.push(link);
             }
-            //console.log("Song added")
         }
        
-        //console.log("YouTube links for playlist:", links);
         return(links) // remove for output
     } catch (error) {
         console.error("Error in main function:", error);
