@@ -3,9 +3,6 @@ import fs from "fs";
 import {main, getPlaylistItems} from "./index.mjs" 
 import pLimit from 'p-limit'; 
 
-const ffmpegStatic = require('ffmpeg-static');
-const ffmpeg = require('fluent-ffmpeg');
-ffmpeg.setFfmpegPath(ffmpegStatic);
 
 
 
