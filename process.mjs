@@ -3,9 +3,6 @@ import fs from "fs";
 import {main, getPlaylistItems} from "./index.mjs" 
 import pLimit from 'p-limit'; 
 
-
-
-
 const url = await main();
 const playlist = await getPlaylistItems();
 const limit = pLimit(5);
