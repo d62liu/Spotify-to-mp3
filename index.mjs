@@ -1,7 +1,7 @@
 import puppeteer from 'puppeteer'; 
 import promptSync from 'prompt-sync';
-const client_id = 'd3122c73ca094774a88360da4b90e9c6';
-const client_secret = '0fa9601ac3b54549b7fb30131f25c42d';
+const client_id = 'YOUR_CLIENT_ID';
+const client_secret = 'YOUR_CLIENT';
 const prompt = promptSync();
 // let ask = prompt("playlist link:")
 // let playlistlink = `${ask}`
