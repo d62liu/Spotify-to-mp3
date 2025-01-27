@@ -1,11 +1,11 @@
 import puppeteer from 'puppeteer'; 
 import promptSync from 'prompt-sync';
-const client_id = 'YOUR_CLIENT_ID';
-const client_secret = 'YOUR_CLIENT';
+const client_id = 'YOUR CLIENT ID';
+const client_secret = 'YOUR CLIENT';
 const prompt = promptSync();
 // let ask = prompt("playlist link:")
 // let playlistlink = `${ask}`
-const regex = /playlist\/([a-zA-Z0-9]+)\?/;
+const regex = '^/playlist\/([a-zA-Z0-9]+)\?/';
 const playlistid = "3Yf4eUuIIV0dskod5W2Nkm" //(playlistlink.match(regex))[1];
 
 export {main, getPlaylistItems};
