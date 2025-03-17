@@ -13,6 +13,7 @@
     "ffmpeg": "^0.0.4",
     "p-limit": "^6.2.0",
     "paralleljs": "^1.1.0",
-    "prompt-sync": "^4.2.0"
+    "prompt-sync": "^4.2.0",
+    "puppeteer": "^24.4.0"
   }
 }

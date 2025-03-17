@@ -1,36 +1,66 @@
-import ytdl from '@distube/ytdl-core'
-import fs from "fs";
-import {main, getPlaylistItems} from "./index.mjs" 
-import pLimit from 'p-limit'; 
+import ytdl from '@distube/ytdl-core';
+import fs from 'fs';
+import path from 'path';
+import { main, getPlaylistItems } from './index.mjs';
+import pLimit from 'p-limit';
 
+const CONCURRENT_DOWNLOADS = parseInt(process.env.CONCURRENT_DOWNLOADS || '5', 10);
+const DOWNLOAD_DIR = 'downloads';
 
-const url = await main();
-const playlist = await getPlaylistItems();
-const limit = pLimit(5);
+if (!fs.existsSync(DOWNLOAD_DIR)) {
+  fs.mkdirSync(DOWNLOAD_DIR);
+}
 
-const download = async (videoUrl, videoname) => {
+const sanitizeFilename = (name) => name.replace(/[^a-zA-Z0-9-_ ]/g, '').replace(/\s+/g, '_');
+
+const download = async (videoUrl, videoName, index, total) => {
+  if (!videoUrl) {
+    console.error(`Skipping ${videoName} (No valid URL)`);
+    return;
+  }
+
   try {
-    const stream = await ytdl(videoUrl, {quality:"18"});
-    stream.pipe(fs.createWriteStream(`${videoname}.mp3`))
-      .on("finish", () => {
-        console.log("Download completed!");
-      })
+    console.log(`[${index + 1}/${total}] Downloading: ${videoName}`);
 
-      .on("error", (error) => {
-        console.error("Error writing to file:", error);
+    const filePath = path.join(DOWNLOAD_DIR, `${sanitizeFilename(videoName)}.mp3`);
+    const stream = await ytdl(videoUrl, { quality: '18' });
 
-      });
+    return new Promise((resolve, reject) => {
+      stream.pipe(fs.createWriteStream(filePath))
+        .on('finish', () => {
+          console.log(`✅ Download completed: ${videoName}`);
+          resolve();
+        })
+        .on('error', (error) => {
+          console.error(`❌ Error writing ${videoName}:`, error);
+          reject(error);
+        });
+    });
   } catch (error) {
-    console.error("Error downloading video:", error);
+    console.error(`❌ Error downloading ${videoName}:`, error);
   }
 };
 
-const tasks = []; 
+const processDownloads = async () => {
+  try {
+    const urlList = await main();
+    const playlist = await getPlaylistItems();
 
-for (let i = 0; i < url.length; i++) {
-  const videoUrl = url[i];
-  const fileName = playlist[i]; 
-  const task = limit(() => download(videoUrl, fileName));
-  tasks.push(task);
-}
-Promise.all(tasks).then(() => console.log("all downloads are complete"))
+    if (!urlList || !playlist || urlList.length === 0 || playlist.length === 0) {
+      console.error('No valid playlist items found.');
+      return;
+    }
+
+    const limit = pLimit(CONCURRENT_DOWNLOADS);
+    const tasks = urlList.map((videoUrl, i) =>
+      limit(() => download(videoUrl, playlist[i].track, i, urlList.length))
+    );
+
+    await Promise.all(tasks);
+    console.log('All downloads are complete!');
+  } catch (error) {
+    console.error('Error processing downloads:', error);
+  }
+};
+
+processDownloads();
