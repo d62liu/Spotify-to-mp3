@@ -72,7 +72,7 @@ async function getPlaylistItems() {
         const songName = item.track.name;
         const artistNames = item.track.artists.map(artist => artist.name).join(", ");
         tracks.push({ track: `${songName} by ${artistNames}`, songName, artistNames });
-      }
+      } 
     }
     return tracks;
   } catch (error) {
