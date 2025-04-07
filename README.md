@@ -18,29 +18,25 @@ To set up the project locally:
 
 ### Clone the Repository
 
-```
-bash
+```bash
 git clone https://github.com/d62liu/Spotify-to-mp3.git
 ```
 
 ### Navigate to the Project Directory
 
-```
-bash
+```bash
 cd Spotify-to-mp3
 ```
 
 ### Install Dependencies
 
-```
-bash
+```bash
 npm install
 ```
 
 ### Run the Application
 
-```
-bash
+```bash
 node index.mjs
 ```
 
