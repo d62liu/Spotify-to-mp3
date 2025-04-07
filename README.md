@@ -40,6 +40,6 @@ npm install
 node index.mjs
 ```
 
-> ⚠️ **Note**: Make sure you have the required Spotify credentials set up. You may also need `ffmpeg` installed on your system for the conversion to work.
+> ⚠️ **Note**: Make sure you have the required Spotify credentials set up.
 
 
